@@ -9,6 +9,14 @@ Feel free to contribute and integrate changes from original repository to this o
 
 **end of disclaimer**
 
+## Intallation
+
+Simply run `composer require soyhuce/zttp`. That's all.
+
+## Documentation
+
+From [kitetail/zttp](https://github.com/kitetail/zttp)
+
 Zttp is a simple Guzzle wrapper designed to provide a really pleasant development experience for most common use cases.
 
 If you need more functionality, just use [Guzzle](https://github.com/guzzle/guzzle) :)
