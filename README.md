@@ -1,10 +1,13 @@
 # Zttp
 
 **Important disclaimer :**
+
 This package is a fork of [kitetail/zttp](https://github.com/kitetail/zttp) for those who love PSR-2 and type-hinting.
 All credit must go to its authors, they did an amazing work.
 
 Feel free to contribute and integrate changes from original repository to this one.
+
+**end of disclaimer**
 
 Zttp is a simple Guzzle wrapper designed to provide a really pleasant development experience for most common use cases.
 
