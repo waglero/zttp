@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) Adam Wathan
+Copyright for portions of this project are held by Adam Wathan as part of project [zttp](https://github.com/kitetail/zttp).
+All other copyright for project Foo are held by SoyHuCe.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

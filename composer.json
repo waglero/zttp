@@ -1,12 +1,15 @@
 {
-    "name": "kitetail/zttp",
+    "name": "soyhuce/zttp",
     "description": "A developer-experience focused HTTP client, optimized for most common use cases.",
-    "keywords": ["http", "guzzle"],
+    "keywords": [
+        "http",
+        "guzzle"
+    ],
     "license": "MIT",
     "authors": [
         {
-            "name": "Adam Wathan",
-            "email": "adam.wathan@gmail.com"
+            "name": "Bastien Philippe",
+            "email": "bastien.philippe@soyhuce.fr"
         }
     ],
     "require": {
@@ -19,10 +22,18 @@
     },
     "autoload": {
         "files": [
-            "src/Zttp.php"
-        ]
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Soyhuce\\Zttp\\": "src/"
+        }
     },
     "scripts": {
         "test": "vendor/bin/phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.2.x-dev"
+        }
     }
 }
