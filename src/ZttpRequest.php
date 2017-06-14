@@ -63,6 +63,26 @@ class ZttpRequest
     }
 
     /**
+     * Disables https verification
+     *
+     * @return self
+     */
+    function withoutVerifying()
+    {
+        return tap(
+            $this,
+            function () {
+                return $this->options = array_merge_recursive(
+                    $this->options,
+                    [
+                        'verify' => false,
+                    ]
+                );
+            }
+        );
+    }
+
+    /**
      * Send parameters as json
      *
      * @return self
