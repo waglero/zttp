@@ -414,6 +414,7 @@ class ZttpTest extends TestCase
         $response = Zttp::get($this->url('/get'));
 
         $this->assertEquals('application/json', $response->header('Content-Type'));
+        $this->assertEquals('application/json', $response->headers()['Content-Type']);
     }
 
     /** @test */
@@ -470,5 +471,29 @@ class ZttpTest extends TestCase
         $this->assertFalse($response->isRedirect());
         $this->assertFalse($response->isClientError());
         $this->assertFalse($response->isServerError());
+    }
+
+    /** @test */
+    function multiple_callbacks_can_be_run_before_sending_the_request()
+    {
+        $state = [];
+
+        $response = Zttp::beforeSending(function ($request) use (&$state) {
+            return tap($request, function ($request) use (&$state) {
+                $state['url'] = $request->url();
+                $state['method'] = $request->method();
+            });
+        })->beforeSending(function ($request) use (&$state) {
+            return tap($request, function ($request) use (&$state) {
+                $state['headers'] = $request->headers();
+                $state['body'] = $request->body();
+            });
+        })->withHeaders(['Z-Status' => 200])->post($this->url('/post'), ['foo' => 'bar']);
+
+        $this->assertEquals($this->url('/post'), $state['url']);
+        $this->assertEquals('POST', $state['method']);
+        $this->assertArrayHasKey('User-Agent', $state['headers']);
+        $this->assertEquals(200, $state['headers']['Z-Status']);
+        $this->assertEquals(json_encode(['foo' => 'bar']), $state['body']);
     }
 }
