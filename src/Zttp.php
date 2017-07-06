@@ -7,14 +7,15 @@ namespace Soyhuce\Zttp;
  *
  * @package Soyhuce\Zttp
  *
- * @method static ZttpRequest withoutRedirecting()
- * @method static ZttpRequest withoutVerifying()
- * @method static ZttpRequest asJson()
- * @method static ZttpRequest asFormParams()
- * @method static ZttpRequest bodyFormat(string $format)
- * @method static ZttpRequest contentType(string $contentType)
- * @method static ZttpRequest accept(string $accept)
- * @method static ZttpRequest withHeaders(array $headers)
+ * @method static PendingZttpRequest withoutRedirecting()
+ * @method static PendingZttpRequest withoutVerifying()
+ * @method static PendingZttpRequest asJson()
+ * @method static PendingZttpRequest asFormParams()
+ * @method static PendingZttpRequest bodyFormat(string $format)
+ * @method static PendingZttpRequest contentType(string $contentType)
+ * @method static PendingZttpRequest accept(string $accept)
+ * @method static PendingZttpRequest withHeaders(array $headers)
+ * @method static PendingZttpRequest beforeSending(callable $callback)
  * @method static ZttpResponse get(string $url, array $params = [])
  * @method static ZttpResponse post(string $url, array $params = [])
  * @method static ZttpResponse patch(string $url, array $params = [])
@@ -24,22 +25,9 @@ namespace Soyhuce\Zttp;
  */
 class Zttp
 {
-    /** @var \GuzzleHttp\Client */
-    static $client;
-
     public static function __callStatic($method, $args)
     {
-        return ZttpRequest::new(static::client())->{$method}(...$args);
+        return PendingZttpRequest::new()->{$method}(...$args);
     }
 
-    /**
-     * Returns client singleton and creates it if needed
-     *
-     * @static
-     * @return \GuzzleHttp\Client
-     */
-    public static function client() : \GuzzleHttp\Client
-    {
-        return static::$client ? : static::$client = new \GuzzleHttp\Client();
-    }
 }

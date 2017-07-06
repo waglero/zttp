@@ -56,6 +56,20 @@ class ZttpResponse
     }
 
     /**
+     * Returns the headers
+     *
+     * @return array
+     */
+    public function headers() : array
+    {
+        return collect($this->response->getHeaders())->mapWithKeys(
+            function ($v, $k) {
+                return [$k => $v[0]];
+            }
+        )->all();
+    }
+
+    /**
      * Returns the status code
      *
      * @return int
