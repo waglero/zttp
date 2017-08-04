@@ -101,6 +101,16 @@ class PendingZttpRequest
     }
 
     /**
+     * Send parameters as multipart
+     *
+     * @return self
+     */
+    public function asMultipart() : self
+    {
+        return $this->bodyFormat('multipart');
+    }
+
+    /**
      * Set parameters format
      *
      * @param string $format
@@ -153,6 +163,50 @@ class PendingZttpRequest
                     $this->options,
                     [
                         'headers' => $headers,
+                    ]
+                );
+            }
+        );
+    }
+
+    /**
+     * Set basic auth credentials
+     *
+     * @param string $username
+     * @param string $password
+     * @return self
+     */
+    public function withBasicAuth(string $username, string $password) : self
+    {
+        return tap(
+            $this,
+            function () use ($username, $password) {
+                return $this->options = array_merge_recursive(
+                    $this->options,
+                    [
+                        'auth' => [$username, $password],
+                    ]
+                );
+            }
+        );
+    }
+
+    /**
+     * Set digest auth credentials
+     *
+     * @param string $username
+     * @param string $password
+     * @return self
+     */
+    public function withDigestAuth(string $username, string $password) : self
+    {
+        return tap(
+            $this,
+            function () use ($username, $password) {
+                return $this->options = array_merge_recursive(
+                    $this->options,
+                    [
+                        'auth' => [$username, $password, 'digest'],
                     ]
                 );
             }
