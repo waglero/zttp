@@ -11,6 +11,10 @@ namespace Soyhuce\Zttp;
  */
 class ZttpResponse
 {
+    use \Illuminate\Support\Traits\Macroable {
+        __call as macroCall;
+    }
+
     /** @var \GuzzleHttp\Psr7\Response */
     private $response;
 
@@ -70,13 +74,14 @@ class ZttpResponse
     }
 
     /**
-     * Returns the status code
+     * True if the request was successful, false otherwise
+     * Alias for isSuccess
      *
-     * @return int
+     * @return bool
      */
-    public function status() : int
+    public function isOk() : bool
     {
-        return $this->response->getStatusCode();
+        return $this->isSuccess();
     }
 
     /**
@@ -90,14 +95,13 @@ class ZttpResponse
     }
 
     /**
-     * True if the request was successful, false otherwise
-     * Alias for isSuccess
+     * Returns the status code
      *
-     * @return bool
+     * @return int
      */
-    public function isOk() : bool
+    public function status() : int
     {
-        return $this->isSuccess();
+        return $this->response->getStatusCode();
     }
 
     /**
@@ -132,6 +136,10 @@ class ZttpResponse
 
     function __call($method, $args)
     {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $args);
+        }
+
         return $this->response->{$method}(...$args);
     }
 }

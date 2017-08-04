@@ -29,5 +29,4 @@ class Zttp
     {
         return PendingZttpRequest::new()->{$method}(...$args);
     }
-
 }

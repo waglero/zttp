@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Soyhuce\Zttp\Zttp;
-
+use Soyhuce\Zttp\ZttpResponse;
 class ZttpTest extends TestCase
 {
     public static function setUpBeforeClass()
@@ -495,5 +495,23 @@ class ZttpTest extends TestCase
         $this->assertArrayHasKey('User-Agent', $state['headers']);
         $this->assertEquals(200, $state['headers']['Z-Status']);
         $this->assertEquals(json_encode(['foo' => 'bar']), $state['body']);
+    }
+
+    /** @test */
+    function response_can_use_macros()
+    {
+        ZttpResponse::macro('testMacro', function () {
+            return vsprintf('%s %s', [
+                $this->json()['json']['foo'],
+                $this->json()['json']['baz'],
+            ]);
+        });
+
+        $response = Zttp::post($this->url('/post'), [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ]);
+
+        $this->assertEquals('bar qux', $response->testMacro());
     }
 }
