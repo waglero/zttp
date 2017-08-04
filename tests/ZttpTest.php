@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Soyhuce\Zttp\Zttp;
 use Soyhuce\Zttp\ZttpResponse;
+
 class ZttpTest extends TestCase
 {
     public static function setUpBeforeClass()
@@ -131,6 +132,22 @@ class ZttpTest extends TestCase
     }
 
     /** @test */
+    public function post_content_can_be_sent_as_multipart()
+    {
+        $response = Zttp::asMultipart()->post(
+            $this->url('/post'),
+            [
+                [
+                    'name' => 'foo',
+                    'contents' => 'data',
+                    'headers' => ['Z-Baz' => 'bar'],
+                ],
+            ]
+        );
+        $this->assertTrue($response->isOk());
+    }
+
+    /** @test */
     public function post_content_can_be_sent_as_json_explicitly()
     {
         $response = Zttp::asJson()->post(
@@ -140,7 +157,6 @@ class ZttpTest extends TestCase
                 'baz' => 'qux',
             ]
         );
-
         $this->assertArraySubset(
             [
                 'headers' => [
@@ -478,17 +494,27 @@ class ZttpTest extends TestCase
     {
         $state = [];
 
-        $response = Zttp::beforeSending(function ($request) use (&$state) {
-            return tap($request, function ($request) use (&$state) {
-                $state['url'] = $request->url();
-                $state['method'] = $request->method();
-            });
-        })->beforeSending(function ($request) use (&$state) {
-            return tap($request, function ($request) use (&$state) {
-                $state['headers'] = $request->headers();
-                $state['body'] = $request->body();
-            });
-        })->withHeaders(['Z-Status' => 200])->post($this->url('/post'), ['foo' => 'bar']);
+        $response = Zttp::beforeSending(
+            function ($request) use (&$state) {
+                return tap(
+                    $request,
+                    function ($request) use (&$state) {
+                        $state['url'] = $request->url();
+                        $state['method'] = $request->method();
+                    }
+                );
+            }
+        )->beforeSending(
+            function ($request) use (&$state) {
+                return tap(
+                    $request,
+                    function ($request) use (&$state) {
+                        $state['headers'] = $request->headers();
+                        $state['body'] = $request->body();
+                    }
+                );
+            }
+        )->withHeaders(['Z-Status' => 200])->post($this->url('/post'), ['foo' => 'bar']);
 
         $this->assertEquals($this->url('/post'), $state['url']);
         $this->assertEquals('POST', $state['method']);
@@ -500,18 +526,35 @@ class ZttpTest extends TestCase
     /** @test */
     function response_can_use_macros()
     {
-        ZttpResponse::macro('testMacro', function () {
-            return vsprintf('%s %s', [
-                $this->json()['json']['foo'],
-                $this->json()['json']['baz'],
-            ]);
-        });
+        ZttpResponse::macro(
+            'testMacro',
+            function () {
+                return vsprintf(
+                    '%s %s',
+                    [
+                        $this->json()['json']['foo'],
+                        $this->json()['json']['baz'],
+                    ]
+                );
+            }
+        );
 
-        $response = Zttp::post($this->url('/post'), [
-            'foo' => 'bar',
-            'baz' => 'qux',
-        ]);
+        $response = Zttp::post(
+            $this->url('/post'),
+            [
+                'foo' => 'bar',
+                'baz' => 'qux',
+            ]
+        );
 
         $this->assertEquals('bar qux', $response->testMacro());
+    }
+
+    /** @test */
+    function can_use_basic_auth()
+    {
+        $response = Zttp::withBasicAuth('zttp', 'secret')->get($this->url('/basic-auth'));
+
+        $this->assertTrue($response->isOk());
     }
 }
