@@ -18,7 +18,7 @@ namespace Soyhuce\Zttp;
  * @method static PendingZttpRequest withHeaders(array $headers)
  * @method static PendingZttpRequest withBasicAuth(string $username, string $password)
  * @method static PendingZttpRequest withDigestAuth(string $username, string $password)
- * @method static PendingZttpRequest with(array $headers)
+ * @method static PendingZttpRequest timeout(int $seconds)
  * @method static PendingZttpRequest beforeSending(callable $callback)
  * @method static ZttpResponse get(string $url, array $params = [])
  * @method static ZttpResponse post(string $url, array $params = [])

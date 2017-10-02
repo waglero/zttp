@@ -35,7 +35,7 @@ class ZttpResponse
      */
     function body() : string
     {
-        return (string)$this->response->getBody();
+        return (string) $this->response->getBody();
     }
 
     /**
@@ -45,7 +45,7 @@ class ZttpResponse
      */
     public function json() : array
     {
-        return (array)json_decode($this->response->getBody(), true);
+        return (array) json_decode($this->response->getBody(), true);
     }
 
     /**
@@ -74,6 +74,16 @@ class ZttpResponse
     }
 
     /**
+     * Returns the status code
+     *
+     * @return int
+     */
+    public function status() : int
+    {
+        return $this->response->getStatusCode();
+    }
+
+    /**
      * True if the request was successful, false otherwise
      * Alias for isSuccess
      *
@@ -92,16 +102,6 @@ class ZttpResponse
     public function isSuccess()
     {
         return $this->status() >= 200 && $this->status() < 300;
-    }
-
-    /**
-     * Returns the status code
-     *
-     * @return int
-     */
-    public function status() : int
-    {
-        return $this->response->getStatusCode();
     }
 
     /**

@@ -35,3 +35,6 @@ $response->json();
 // ];
 ```
 
+## Installation
+
+`composer require kitetail/zttp`
