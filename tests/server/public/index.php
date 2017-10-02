@@ -48,6 +48,10 @@ $app->get('/simple-response', function () {
     return "A simple string response";
 });
 
+$app->get('/timeout', function () {
+    sleep(2);
+});
+
 $app->get('/basic-auth', function () {
     $headers = [
         (bool) preg_match('/Basic\s[a-zA-Z0-9]+/', app('request')->header('Authorization')),
@@ -56,6 +60,15 @@ $app->get('/basic-auth', function () {
     ];
 
     return (count(array_unique($headers)) === 1) ? response(null, 200) : response(null, 401);
+});
+
+$app->post('/multi-part', function () {
+    return response()->json([
+        'body_content' => app('request')->only(['foo', 'baz']),
+        'has_file' => app('request')->hasFile('test-file'),
+        'file_content' => file_get_contents($_FILES['test-file']['tmp_name']),
+        'headers' => app('request')->header(),
+    ], 200);
 });
 
 $app->run();

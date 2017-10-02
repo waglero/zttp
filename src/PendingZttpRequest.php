@@ -214,6 +214,18 @@ class PendingZttpRequest
     }
 
     /**
+     * Set timeout
+     *
+     * @param int $seconds
+     * @return $this
+     */
+    function timeout(int $seconds) : self
+    {
+        $this->options['timeout'] = $seconds;
+        return $this;
+    }
+
+    /**
      * Add a beforeSending callback
      *
      * @param callable $callback
@@ -326,21 +338,17 @@ class PendingZttpRequest
      * @param string $url
      * @param array $options
      * @return ZttpResponse
+     * @throws ConnectionException
      */
     public function send(string $method, string $url, array $options) : ZttpResponse
     {
-        return new ZttpResponse(
-            $this->buildClient()->request(
-                $method,
-                $url,
-                $this->mergeOptions(
-                    [
-                        'query' => $this->parseQueryParams($url),
-                    ],
-                    $options
-                )
-            )
-        );
+        try {
+            return new ZttpResponse($this->buildClient()->request($method, $url, $this->mergeOptions(
+                    ['query' => $this->parseQueryParams($url)], $options
+                )));
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+            throw new ConnectionException($e->getMessage(), 0, $e);
+        }
     }
 
     /**
