@@ -66,11 +66,9 @@ class ZttpResponse
      */
     public function headers() : array
     {
-        return collect($this->response->getHeaders())->mapWithKeys(
-            function ($v, $k) {
-                return [$k => $v[0]];
-            }
-        )->all();
+        return collect($this->response->getHeaders())->mapWithKeys(function ($v, $k) {
+            return [$k => $v[0]];
+        })->all();
     }
 
     /**
@@ -134,7 +132,12 @@ class ZttpResponse
         return $this->status() >= 500;
     }
 
-    function __call($method, $args)
+    public function __toString() : string
+    {
+        return $this->body();
+    }
+
+    public function __call($method, $args)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $args);
