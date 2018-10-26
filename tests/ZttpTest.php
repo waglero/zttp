@@ -82,6 +82,22 @@ class ZttpTest extends TestCase
     }
 
     /** @test */
+    public function options_can_be_set_all_at_once()
+    {
+        $response = Zttp::withOptions([
+            'headers' => [
+                'accept' => ['text/xml'],
+            ],
+        ])->get($this->url('/get'));
+
+        $this->assertArraySubset([
+            'headers' => [
+                'accept' => ['text/xml'],
+            ],
+        ], $response->json());
+    }
+
+    /** @test */
     public function post_content_is_json_by_default()
     {
         $response = Zttp::post(
@@ -139,7 +155,7 @@ class ZttpTest extends TestCase
             [
                 [
                     'name' => 'foo',
-                    'contents' => 'bar'
+                    'contents' => 'bar',
                 ],
                 [
                     'name' => 'baz',
@@ -501,7 +517,7 @@ class ZttpTest extends TestCase
     }
 
     /** @test */
-    function multiple_callbacks_can_be_run_before_sending_the_request()
+    public function multiple_callbacks_can_be_run_before_sending_the_request()
     {
         $state = [];
 
@@ -535,7 +551,7 @@ class ZttpTest extends TestCase
     }
 
     /** @test */
-    function response_can_use_macros()
+    public function response_can_use_macros()
     {
         ZttpResponse::macro(
             'testMacro',
@@ -562,18 +578,26 @@ class ZttpTest extends TestCase
     }
 
     /** @test */
-    function can_use_basic_auth()
+    public function can_use_basic_auth()
     {
-       $response = Zttp::withBasicAuth('zttp', 'secret')->get($this->url('/basic-auth'));
+        $response = Zttp::withBasicAuth('zttp', 'secret')->get($this->url('/basic-auth'));
 
-       $this->assertTrue($response->isOk());
+        $this->assertTrue($response->isOk());
+    }
+
+    /** @test */
+    public function can_use_digest_auth()
+    {
+        $response = Zttp::withDigestAuth('zttp', 'secret')->get($this->url('/digest-auth'));
+
+        $this->assertTrue($response->isOk());
     }
 
     /**
      * @test
      * @expectedException \Soyhuce\Zttp\ConnectionException
      */
-    function client_will_force_timeout()
+    public function client_will_force_timeout()
     {
         Zttp::timeout(1)->get($this->url('/timeout'));
     }

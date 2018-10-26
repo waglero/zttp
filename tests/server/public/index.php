@@ -16,43 +16,43 @@ function build_response($request)
     ], $request->header('Z-Status', 200));
 }
 
-$app->get('/get', function () {
+$app->router->get('/get', function () {
     return build_response(app('request'));
 });
 
-$app->post('/post', function () {
+$app->router->post('/post', function () {
     return build_response(app('request'));
 });
 
-$app->put('/put', function () {
+$app->router->put('/put', function () {
     return build_response(app('request'));
 });
 
-$app->patch('/patch', function () {
+$app->router->patch('/patch', function () {
     return build_response(app('request'));
 });
 
-$app->delete('/delete', function () {
+$app->router->delete('/delete', function () {
     return build_response(app('request'));
 });
 
-$app->get('/redirect', function () {
+$app->router->get('/redirect', function () {
     return redirect('redirected');
 });
 
-$app->get('/redirected', function () {
+$app->router->get('/redirected', function () {
     return "Redirected!";
 });
 
-$app->get('/simple-response', function () {
+$app->router->get('/simple-response', function () {
     return "A simple string response";
 });
 
-$app->get('/timeout', function () {
+$app->router->get('/timeout', function () {
     sleep(2);
 });
 
-$app->get('/basic-auth', function () {
+$app->router->get('/basic-auth', function () {
     $headers = [
         (bool) preg_match('/Basic\s[a-zA-Z0-9]+/', app('request')->header('Authorization')),
         app('request')->header('php-auth-user') === 'zttp',
@@ -62,7 +62,41 @@ $app->get('/basic-auth', function () {
     return (count(array_unique($headers)) === 1) ? response(null, 200) : response(null, 401);
 });
 
-$app->post('/multi-part', function () {
+$app->router->get('/digest-auth', function () {
+    $realm = 'Restricted area';
+
+    $authorization = app('request')->server->get('PHP_AUTH_DIGEST');
+    if (!$authorization) {
+        return response(null, 401)->header(
+            'WWW-Authenticate',
+            'Digest realm="' . $realm . '",qop="auth",nonce="' . uniqid() . '",opaque="' . md5($realm) . '"'
+        );
+    }
+
+    $data = ['nonce' => null, 'nc' => null, 'cnonce' => null, 'qop' => null, 'username' => null, 'uri' => null, 'response' => null];
+    foreach (array_keys($data) as $key) {
+        if (!preg_match("@$key=(?:\"(.*)\"|'(.*)'|(.*),)@U", $authorization, $matches)) {
+            return response(null, 401);
+        }
+        $data[$key] = array_values(array_filter($matches))[1];
+    }
+
+    if ($data['username'] != 'zttp') {
+        return response(null, 401);
+    }
+
+    $a = md5('zttp:' . $realm . ':secret');
+    $b = md5(app('request')->server->get('REQUEST_METHOD') . ':' . $data['uri']);
+    $validResponse = md5($a . ':' . $data['nonce'] . ':' . $data['nc'] . ':'.$data['cnonce'] . ':' . $data['qop'] . ':' . $b);
+
+    if ($data['response'] != $validResponse) {
+        return response(null, 401);
+    }
+
+    return response(200);
+});
+
+$app->router->post('/multi-part', function () {
     return response()->json([
         'body_content' => app('request')->only(['foo', 'baz']),
         'has_file' => app('request')->hasFile('test-file'),

@@ -32,7 +32,7 @@ class ZttpRequest
      */
     public function url() : string
     {
-        return (string)$this->request->getUri();
+        return (string) $this->request->getUri();
     }
 
     /**
@@ -40,7 +40,7 @@ class ZttpRequest
      *
      * @return string
      */
-    function method() : string
+    public function method() : string
     {
         return $this->request->getMethod();
     }
@@ -50,7 +50,7 @@ class ZttpRequest
      *
      * @return string
      */
-    function body() : string
+    public function body() : string
     {
         return (string)$this->request->getBody();
     }
@@ -60,12 +60,10 @@ class ZttpRequest
      *
      * @return array
      */
-    function headers() : array
+    public function headers() : array
     {
-        return collect($this->request->getHeaders())->mapWithKeys(
-            function ($values, $header) {
-                return [$header => $values[0]];
-            }
-        )->all();
+        return collect($this->request->getHeaders())->mapWithKeys(function ($values, $header) {
+            return [$header => $values[0]];
+        })->all();
     }
 }

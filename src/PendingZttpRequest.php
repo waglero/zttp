@@ -41,23 +41,30 @@ class PendingZttpRequest
     }
 
     /**
+     * Add multiple options at once
+     *
+     * @param array $options
+     * @return self
+     */
+    public function withOptions($options) : self
+    {
+        return tap($this, function () use ($options) {
+            return $this->options = array_merge_recursive($this->options, $options);
+        });
+    }
+
+    /**
      * Disables http redirects
      *
      * @return self
      */
     public function withoutRedirecting() : self
     {
-        return tap(
-            $this,
-            function () {
-                return $this->options = array_merge_recursive(
-                    $this->options,
-                    [
-                        'allow_redirects' => false,
-                    ]
-                );
-            }
-        );
+        return tap($this, function () {
+            return $this->options = array_merge_recursive($this->options, [
+                'allow_redirects' => false,
+            ]);
+        });
     }
 
     /**
@@ -65,19 +72,13 @@ class PendingZttpRequest
      *
      * @return self
      */
-    function withoutVerifying()
+    public function withoutVerifying()
     {
-        return tap(
-            $this,
-            function () {
-                return $this->options = array_merge_recursive(
-                    $this->options,
-                    [
-                        'verify' => false,
-                    ]
-                );
-            }
-        );
+        return tap($this, function () {
+            return $this->options = array_merge_recursive($this->options, [
+                'verify' => false,
+            ]);
+        });
     }
 
     /**
@@ -118,12 +119,9 @@ class PendingZttpRequest
      */
     public function bodyFormat(string $format) : self
     {
-        return tap(
-            $this,
-            function () use ($format) {
-                $this->bodyFormat = $format;
-            }
-        );
+        return tap($this, function () use ($format) {
+            $this->bodyFormat = $format;
+        });
     }
 
     /**
@@ -156,17 +154,11 @@ class PendingZttpRequest
      */
     function withHeaders(array $headers) : self
     {
-        return tap(
-            $this,
-            function () use ($headers) {
-                $this->options = array_merge_recursive(
-                    $this->options,
-                    [
-                        'headers' => $headers,
-                    ]
-                );
-            }
-        );
+        return tap($this, function () use ($headers) {
+            $this->options = array_merge_recursive($this->options, [
+                'headers' => $headers,
+            ]);
+        });
     }
 
     /**
@@ -178,17 +170,11 @@ class PendingZttpRequest
      */
     public function withBasicAuth(string $username, string $password) : self
     {
-        return tap(
-            $this,
-            function () use ($username, $password) {
-                return $this->options = array_merge_recursive(
-                    $this->options,
-                    [
-                        'auth' => [$username, $password],
-                    ]
-                );
-            }
-        );
+        return tap($this, function () use ($username, $password) {
+            return $this->options = array_merge_recursive($this->options, [
+                'auth' => [$username, $password],
+            ]);
+        });
     }
 
     /**
@@ -200,17 +186,11 @@ class PendingZttpRequest
      */
     public function withDigestAuth(string $username, string $password) : self
     {
-        return tap(
-            $this,
-            function () use ($username, $password) {
-                return $this->options = array_merge_recursive(
-                    $this->options,
-                    [
-                        'auth' => [$username, $password, 'digest'],
-                    ]
-                );
-            }
-        );
+        return tap($this, function () use ($username, $password) {
+            return $this->options = array_merge_recursive($this->options, [
+                'auth' => [$username, $password, 'digest'],
+            ]);
+        });
     }
 
     /**
@@ -233,12 +213,9 @@ class PendingZttpRequest
      */
     public function beforeSending(callable $callback) : self
     {
-        return tap(
-            $this,
-            function () use ($callback) {
-                $this->beforeSendingCallbacks[] = $callback;
-            }
-        );
+        return tap($this, function () use ($callback) {
+            $this->beforeSendingCallbacks[] = $callback;
+        });
     }
 
     /**
@@ -250,13 +227,9 @@ class PendingZttpRequest
      */
     public function get(string $url, array $queryParams = []) : ZttpResponse
     {
-        return $this->send(
-            'GET',
-            $url,
-            [
-                'query' => $queryParams,
-            ]
-        );
+        return $this->send('GET', $url, [
+            'query' => $queryParams,
+        ]);
     }
 
     /**
@@ -268,13 +241,9 @@ class PendingZttpRequest
      */
     public function post(string $url, array $params = []) : ZttpResponse
     {
-        return $this->send(
-            'POST',
-            $url,
-            [
-                $this->bodyFormat => $params,
-            ]
-        );
+        return $this->send('POST', $url, [
+            $this->bodyFormat => $params,
+        ]);
     }
 
     /**
@@ -286,13 +255,9 @@ class PendingZttpRequest
      */
     public function patch(string $url, array $params = []) : ZttpResponse
     {
-        return $this->send(
-            'PATCH',
-            $url,
-            [
-                $this->bodyFormat => $params,
-            ]
-        );
+        return $this->send('PATCH', $url, [
+            $this->bodyFormat => $params,
+        ]);
     }
 
     /**
@@ -304,13 +269,9 @@ class PendingZttpRequest
      */
     public function put(string $url, array $params = []) : ZttpResponse
     {
-        return $this->send(
-            'PUT',
-            $url,
-            [
-                $this->bodyFormat => $params,
-            ]
-        );
+        return $this->send('PUT', $url, [
+            $this->bodyFormat => $params,
+        ]);
     }
 
     /**
@@ -322,13 +283,9 @@ class PendingZttpRequest
      */
     public function delete(string $url, array $params = []) : ZttpResponse
     {
-        return $this->send(
-            'DELETE',
-            $url,
-            [
-                $this->bodyFormat => $params,
-            ]
-        );
+        return $this->send('DELETE', $url, [
+            $this->bodyFormat => $params,
+        ]);
     }
 
     /**
@@ -343,9 +300,9 @@ class PendingZttpRequest
     public function send(string $method, string $url, array $options) : ZttpResponse
     {
         try {
-            return new ZttpResponse($this->buildClient()->request($method, $url, $this->mergeOptions(
-                    ['query' => $this->parseQueryParams($url)], $options
-                )));
+            return new ZttpResponse($this->buildClient()->request($method, $url, $this->mergeOptions([
+                'query' => $this->parseQueryParams($url)
+            ], $options)));
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             throw new ConnectionException($e->getMessage(), 0, $e);
         }
@@ -368,12 +325,9 @@ class PendingZttpRequest
      */
     protected function buildHandlerStack()
     {
-        return tap(
-            \GuzzleHttp\HandlerStack::create(),
-            function (\GuzzleHttp\HandlerStack $stack) {
-                $stack->push($this->buildBeforeSendingHandler());
-            }
-        );
+        return tap(\GuzzleHttp\HandlerStack::create(), function (\GuzzleHttp\HandlerStack $stack) {
+            $stack->push($this->buildBeforeSendingHandler());
+        });
     }
 
     /**
@@ -398,12 +352,9 @@ class PendingZttpRequest
      */
     protected function runBeforeSendingCallbacks($request)
     {
-        return tap(
-            $request,
-            function ($request) {
-                $this->beforeSendingCallbacks->each->__invoke(new ZttpRequest($request));
-            }
-        );
+        return tap($request, function ($request) {
+            $this->beforeSendingCallbacks->each->__invoke(new ZttpRequest($request));
+        });
     }
 
     /**
@@ -425,11 +376,8 @@ class PendingZttpRequest
      */
     protected function parseQueryParams(string $url) : array
     {
-        return tap(
-            [],
-            function (&$query) use ($url) {
-                parse_str(parse_url($url, PHP_URL_QUERY), $query);
-            }
-        );
+        return tap([], function (&$query) use ($url) {
+            parse_str(parse_url($url, PHP_URL_QUERY), $query);
+        });
     }
 }
