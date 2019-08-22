@@ -1,11 +1,11 @@
 <?php
 
-namespace Soyhuce\Zttp;
+namespace Zttp;
 
 /**
  * Class PendingZttpRequest
  *
- * @package Soyhuce\Zttp
+ * @package Zttp
  */
 class PendingZttpRequest
 {

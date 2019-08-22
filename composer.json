@@ -26,7 +26,7 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Soyhuce\\Zttp\\": "src/"
+            "Zttp\\": "src/"
         }
     },
     "scripts": {

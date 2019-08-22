@@ -2,8 +2,8 @@
 
 use phpDocumentor\Reflection\Types\Callable_;
 use PHPUnit\Framework\TestCase;
-use Soyhuce\Zttp\Zttp;
-use Soyhuce\Zttp\ZttpResponse;
+use Zttp\Zttp;
+use Zttp\ZttpResponse;
 
 class ZttpTest extends TestCase
 {
@@ -596,7 +596,7 @@ class ZttpTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Soyhuce\Zttp\ConnectionException
+     * @expectedException Zttp\ConnectionException
      */
     public function client_will_force_timeout()
     {

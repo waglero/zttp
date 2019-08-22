@@ -1,11 +1,11 @@
 <?php
 
-namespace Soyhuce\Zttp;
+namespace Zttp;
 
 /**
  * Class ConnectionException
  *
- * @package Soyhuce\Zttp
+ * @package Zttp
  * @author  philippe
  */
 class ConnectionException extends \Exception {}

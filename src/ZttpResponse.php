@@ -1,11 +1,11 @@
 <?php
 
-namespace Soyhuce\Zttp;
+namespace Zttp;
 
 /**
  * Class ZttpResponse
  *
- * @package Soyhuce\Zttp
+ * @package Zttp
  *
  * @mixin \GuzzleHttp\Psr7\Response
  */

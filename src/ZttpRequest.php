@@ -1,13 +1,13 @@
 <?php
 
-namespace Soyhuce\Zttp;
+namespace Zttp;
 
 use Psr\Http\Message\RequestInterface;
 
 /**
  * Class ZttpRequest
  *
- * @package Soyhuce\Zttp
+ * @package Zttp
  * @author  philippe
  */
 class ZttpRequest

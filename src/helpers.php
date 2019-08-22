@@ -1,5 +1,5 @@
 <?php
-namespace Soyhuce\Zttp;
+namespace Zttp;
 
 if (!function_exists('tap')) {
     function tap($value, $callback)
