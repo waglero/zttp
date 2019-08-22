@@ -1,5 +1,6 @@
 <?php
 
+use phpDocumentor\Reflection\Types\Callable_;
 use PHPUnit\Framework\TestCase;
 use Soyhuce\Zttp\Zttp;
 use Soyhuce\Zttp\ZttpResponse;
@@ -600,5 +601,19 @@ class ZttpTest extends TestCase
     public function client_will_force_timeout()
     {
         Zttp::timeout(1)->get($this->url('/timeout'));
+    }
+
+    /** @test */
+    public function request_with_additional_middlewares()
+    {
+        $response = Zttp::withAdditionalMiddlewares(
+            [
+                function ($callable) {
+                    return $callable;
+                }
+            ]
+        )->get($this->url('/get'));
+
+        $this->assertTrue($response->isOk());
     }
 }

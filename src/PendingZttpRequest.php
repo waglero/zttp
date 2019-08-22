@@ -15,6 +15,8 @@ class PendingZttpRequest
     private $bodyFormat;
     /** @var array */
     private $options;
+    /** @var array */
+    private $additionalMiddlewares = [];
 
     /**
      * PendingZttpRequest constructor.
@@ -327,6 +329,9 @@ class PendingZttpRequest
     {
         return tap(\GuzzleHttp\HandlerStack::create(), function (\GuzzleHttp\HandlerStack $stack) {
             $stack->push($this->buildBeforeSendingHandler());
+            foreach ($this->additionalMiddlewares as $middleware) {
+                $stack->push($middleware);
+            }
         });
     }
 
@@ -378,6 +383,23 @@ class PendingZttpRequest
     {
         return tap([], function (&$query) use ($url) {
             parse_str(parse_url($url, PHP_URL_QUERY), $query);
+        });
+    }
+
+    /**
+     * @param array $middlewares
+     * @return self
+     */
+    public function withAdditionalMiddlewares(array $middlewares = []): self
+    {
+        return tap($this, function () use ($middlewares) {
+            foreach ($middlewares as $middleware) {
+                if (! is_callable($middleware)) {
+                    throw new \InvalidArgumentException('Additional middlewares must be callable');
+                }
+
+                $this->additionalMiddlewares[] = $middleware;
+            }
         });
     }
 }
